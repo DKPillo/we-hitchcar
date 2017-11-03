@@ -3,7 +3,7 @@
 /**
  * Controller - mapController
  */
-hitchcar.controller('mapCtrl', ['$scope', '$timeout', 'uiGmapGoogleMapApi', function ($scope, $timeout, uiGmapGoogleMapApi) {
+hitchcar.controller('mapCtrl', ['$scope', function ($scope) {
 
     $scope.markers = [];
 
