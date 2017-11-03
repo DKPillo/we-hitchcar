@@ -11,9 +11,17 @@ hitchcar.controller('navigationCtrl', ['$rootScope', '$scope', '$location', func
             path: '/home',
             icon: 'fa-home'
         }, {
-            name: 'Test',
-            path: '/test',
-            icon: 'fa-gear'
+            name: 'Map',
+            path: '/map',
+            icon: 'fa-map-o'
+        }, {
+            name: 'Routes',
+            path: '/routes',
+            icon: 'fa-map-signs'
+        }, {
+            name: 'Profile',
+            path: '/profile',
+            icon: 'fa-user-circle-o'
         }
     ];
 

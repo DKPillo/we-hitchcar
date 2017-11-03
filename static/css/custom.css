@@ -46,3 +46,15 @@ form label {
 .nav.navbar-nav a{
     cursor: pointer;
 }
+
+/*Map*/
+#map-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50px;
+    bottom: 50px;
+}
+#map-container #map {
+    height: 100%;
+}

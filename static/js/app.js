@@ -12,6 +12,10 @@ var hitchcar = angular.module('hitchcar', ['ngAnimate', 'ngAria', 'ngCookies', '
                 templateUrl: './static/templates/home.html',
                 controller: 'homeCtrl'
             }).
+            when( '/map', {
+                templateUrl: './static/templates/map.html',
+                controller: 'mapCtrl'
+            }).
             otherwise({redirectTo: '/home'});
 
         $locationProvider.hashPrefix('');
