@@ -24,10 +24,23 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
         });
     };
 
+    dataService.post = function(postUri, payloadData) {
+        return $q(function(resolve, reject) {
+            $http.post(dataService.api + postUri, payloadData).then(function(result) {
+                resolve(result.data);
+            }).catch(function(error){
+                reject(error);
+            });
+        });
+    };
+
     // Public Service Methods
     return  {
         get : function(getUri, searchParams) {
             return dataService.get(getUri, searchParams);
+        },
+        post : function(postUri, payloadData) {
+            return dataService.post(postUri, payloadData);
         }
     };
 }]);

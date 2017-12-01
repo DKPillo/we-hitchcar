@@ -6,11 +6,32 @@
         <div class="col-lg-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Hello World!</h3>
+                    <h3 class="panel-title">Welcome to Hitchcar</h3>
                 </div>
                 <div class="panel-body">
-                    <p>Lorem ipsum...</p>
-                    <p>{{ message }}</p>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <h4>I'm a passenger</h4>
+                            <br />
+                            <ul class="center-list">
+                                <li>Search for a driver.</li>
+                                <li>Request the driver to pick you up</li>
+                            </ul>
+                            <br />
+                            <a class="btn btn-success btn-block" ng-click="searchRide()">Search a driver</a>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6">
+                            <h4>I'm a driver</h4>
+                            <br />
+                            <ul class="center-list">
+                                <li>Share your car with others</li>
+                                <li>Receive pickup requests</li>
+                            </ul>
+                            <br />
+                            <a class="btn btn-success btn-block" ng-click="startNewRide()">Start a new ride</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

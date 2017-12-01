@@ -30,7 +30,6 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'ec2-35-165-202-44.us-west
 # Application definition
 
 INSTALLED_APPS = [
-    'webeng.apps.HitchcarConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'webeng.hitchcar',
 ]
 
 REST_FRAMEWORK = {
@@ -47,6 +47,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
     'PAGE_SIZE': 10

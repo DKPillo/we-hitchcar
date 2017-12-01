@@ -17,47 +17,55 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 # Create your models here.
 class Ride(models.Model):
+    # Ride Model
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     startTime = models.DateTimeField(auto_now_add=True)
-    start = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
-    destination = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
+    rideStart = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True, related_name='rideStart')
+    rideDestination = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True,
+                                        related_name='rideDestination')
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return "Ride from " + self.start.__str__() + " to " + self.destination.__str__()\
+        return "Ride from " + self.rideStart.__str__() + " to " + self.rideDestination.__str__()\
                + " (" + self.startTime.strftime('%d.%m.%Y %H:%M') + ")."
 
 
 class Waypoint(models.Model):
+    # Waypoint Model
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     timestamp = models.DateTimeField(auto_now_add=True)
-    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
+    waypointLocation = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True,
+                                         related_name='waypointLocation')
     ride = models.ForeignKey('Ride', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return "Waypoint " + self.location.__str__() + "(" + self.timestamp.strftime('%d.%m.%Y %H:%M') + ")."
+        return "Waypoint " + self.waypointLocation.__str__() + "(" + self.timestamp.strftime('%d.%m.%Y %H:%M') + ")."
 
 
 class PickUpRequest(models.Model):
+    # PickUpRequest Model
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     ride = models.ForeignKey('Ride', on_delete=models.SET_NULL, null=True)
-    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
-    destination = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
+    currentLocation = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True,
+                                        related_name='currentLocation')
+    destination = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True,
+                                    related_name='destination')
     answered = models.BooleanField(default=False)
     accepted = models.BooleanField(default=False)
 
     def __str__(self):
-        return "PickUpRequest from " + self.location.__str__() + " to " + self.destination.__str__() + "("\
+        return "PickUpRequest from " + self.currentLocation.__str__() + " to " + self.destination.__str__() + "("\
                + self.user.username + ")."
 
 
 class Location(models.Model):
+    # Location Model
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     title = models.CharField(max_length=200, null=True, blank=True)
     latitude = models.FloatField(null=False, blank=False)
     longitude = models.FloatField(null=False, blank=False)
 
     def __str__(self):
-        return "Location (" + self.title + ") - Lat: " + self.latitude.__str__() + ", Long: " + self.longitude.__str__()
+        return "Location (" + ") - Lat: " + self.latitude.__str__() + ", Long: " + self.longitude.__str__()

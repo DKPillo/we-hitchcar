@@ -23,6 +23,3 @@ urlpatterns = [
     url(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/api-token-auth/', authviews.obtain_auth_token),
 ]
-
-for user in User.objects.all():
-    Token.objects.get_or_create(user=user)
