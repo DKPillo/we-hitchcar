@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'ec2-35-165-202-44.us-west
 # Application definition
 
 INSTALLED_APPS = [
+    'webeng.apps.HitchcarConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,12 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser',
+        'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
     'PAGE_SIZE': 10
 }
 
@@ -56,7 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tutorial.urls'
+ROOT_URLCONF = 'webeng.urls'
 
 TEMPLATES = [
     {
@@ -78,7 +84,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-WSGI_APPLICATION = 'tutorial.wsgi.application'
+WSGI_APPLICATION = 'webeng.wsgi.application'
 
 
 # Database

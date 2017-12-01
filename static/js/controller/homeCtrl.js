@@ -5,6 +5,6 @@
  */
 hitchcar.controller('homeCtrl', ['$scope', function ($scope) {
 
-    $scope.message = 'Hello dudes!';
+    $scope.message = 'Hello in Home!';
 
 }]);

@@ -3,30 +3,82 @@
 /**
  * Module - hitchcar
  */
-var hitchcar = angular.module('hitchcar', ['ngAnimate', 'ngAria', 'ngCookies', 'ngMessages', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch']).
-    config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', 'ngCookies', 'ngMessages', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch']).
+    config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
         // Router Konfiguration
-        $routeProvider.
-            when( '/home', {
-                templateUrl: './static/templates/home.html',
+        $stateProvider
+            .state('public', {
+                templateUrl: 'static/templates/public.html'
+            })
+            .state('public.login', {
+                url: '/login',
+                templateUrl: 'static/templates/controller/login.html',
+                controller: 'loginCtrl'
+            })
+            .state('public.register', {
+                url: '/register',
+                templateUrl: 'static/templates/controller/register.html',
+                controller: 'registerCtrl'
+            })
+            .state('private', {
+                templateUrl: 'static/templates/private.html'
+            })
+            .state('private.home', {
+                url: '/home',
+                templateUrl: 'static/templates/controller/home.html',
                 controller: 'homeCtrl'
-            }).
-            when( '/map', {
-                templateUrl: './static/templates/map.html',
+            })
+            .state('private.map', {
+                url: '/map',
+                templateUrl: 'static/templates/controller/map.html',
                 controller: 'mapCtrl'
-            }).
-            otherwise({redirectTo: '/home'});
+            })
+            .state('private.routes', {
+                url: '/routes',
+                templateUrl: 'static/templates/controller/routes.html',
+                controller: 'routesCtrl'
+            })
+            .state('private.profile', {
+                url: '/profile',
+                templateUrl: 'static/templates/controller/profile.html',
+                controller: 'profileCtrl'
+            })
+            .state('private.logout', {
+                url: '/logout',
+                controller: 'logoutCtrl'
+            });
 
-        $locationProvider.hashPrefix('');
+        $urlRouterProvider.otherwise('/login');
 
     }])
+    .constant('AUTH_EVENTS', {
+        notAuthenticated: 'auth-not-authenticated'
+    })
+    .run(['$rootScope', '$transitions', '$location', function($rootScope, $transitions, $location) {
 
-    .run(['$rootScope', 'dataService', function($rootScope, dataService) {
+        //Change for Production
+        $rootScope.url = $location.protocol()+ '://' + $location.host();
+        if ($location.port() !== 80 || $location.port() !== 443) {
+            $rootScope.url = $rootScope.url + ':' + $location.port()
+        }
 
-        //Initialisierung
-        dataService.initialize(function(data){
-            console.log('init-done');
+        //Redirect unauthenticated User to Login page
+        $transitions.onStart({ to: 'private.**' }, function(transition) {
+            var auth = transition.injector().get('authService');
+            if (!auth.isAuthenticated()) {
+                // User isn't authenticated. Redirect to login state.
+                return transition.router.stateService.target('public.login');
+            }
+        });
+
+        //Redirect authenticated User to Home page
+        $transitions.onStart({ to: 'public.**' }, function(transition) {
+            var auth = transition.injector().get('authService');
+            if (auth.isAuthenticated()) {
+                // User isn't authenticated. Redirect to login state.
+                return transition.router.stateService.target('private.home');
+            }
         });
 
     }]);

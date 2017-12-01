@@ -4,35 +4,30 @@
  * Service - DataService
  *
  */
-hitchcar.factory('dataService', ['$http', '$filter', function($http, $filter){
+hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', function($rootScope, $q, $http, $filter){
 
-    //API Request Config
-    var apiConfig = {'headers': {'Content-Type':'application/x-www-form-urlencoded;charset=utf-8'}};
-    var apiConfigPut = {'headers': {'Content-Type':'application/json;charset=utf-8'}};
-    var apiUrl = 'api/';
+    const dataService = {};
+    dataService.api = $rootScope.url;
 
-    //Data Service
-    var dataService = {};
-    dataService.initialized = false;
+    dataService.get = function(getUri, searchParams) {
+        return $q(function(resolve, reject) {
+            var uri = getUri;
+            if (angular.isDefined(searchParams)) {
+                //TODO, add params
+                uri = uri + '?';
+            }
+            $http.get(dataService.api + uri).then(function(result) {
+                resolve(result.data);
+            }).catch(function(error){
+                reject(error);
+            });
+        });
+    };
 
-    //Data Service initialisieren
-    dataService.initialize = function(callback) {
-        //Nur einmal initialisieren, falls bereits aufgerufen wurde.
-        if (!dataService.initialized) {
-            dataService.initialized = true;
-            callback(true);
-        } else {
-            callback(true);
-        }
-    }
-
-    //Public Service Methods
-    return{
-        initialized: function() {
-            return dataService.initialized;
-        },
-        initialize: function(callback) {
-            dataService.initialize(callback);
+    // Public Service Methods
+    return  {
+        get : function(getUri, searchParams) {
+            return dataService.get(getUri, searchParams);
         }
     };
 }]);
