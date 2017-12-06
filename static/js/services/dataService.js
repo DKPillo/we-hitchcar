@@ -13,8 +13,12 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
         return $q(function(resolve, reject) {
             var uri = getUri;
             if (angular.isDefined(searchParams)) {
-                //TODO, add params
                 uri = uri + '?';
+                var params = [];
+                angular.forEach(searchParams, function (value, key) {
+                    params.push(key + "=" + value)
+                });
+                uri += params.join('&');
             }
             $http.get(dataService.api + uri).then(function(result) {
                 resolve(result.data);
