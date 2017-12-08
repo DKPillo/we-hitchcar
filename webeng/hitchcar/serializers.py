@@ -6,7 +6,7 @@ from webeng.hitchcar.models import Waypoint, PickUpRequest, Location, Ride
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
+        fields = ('url', 'id', 'username', 'email')
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

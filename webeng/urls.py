@@ -20,6 +20,7 @@ router.register(r'locations', views.LocationViewSet)
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html'), name="main"),
     url(r'^api/', include(router.urls)),
+    url(r'^api/user/', views.current_user_view),
     url(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/api-token-auth/', authviews.obtain_auth_token),
 ]

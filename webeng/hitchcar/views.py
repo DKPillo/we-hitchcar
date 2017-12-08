@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from webeng.hitchcar.models import Ride, Waypoint, PickUpRequest, Location
 from webeng.hitchcar.serializers import UserSerializer, GroupSerializer, RideSerializer, WaypointSerializer, \
     PickUpRequestSerializer, LocationSerializer
@@ -12,6 +15,19 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
+
+class CurrentUserViewSet(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+        })
+
+
+current_user_view = CurrentUserViewSet.as_view()
 
 
 class GroupViewSet(viewsets.ModelViewSet):
