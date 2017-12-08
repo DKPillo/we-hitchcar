@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 from webeng.hitchcar.models import Ride, Waypoint, PickUpRequest, Location
 from webeng.hitchcar.serializers import UserSerializer, GroupSerializer, RideSerializer, WaypointSerializer, \
     PickUpRequestSerializer, LocationSerializer
@@ -27,6 +28,8 @@ class RideViewSet(viewsets.ModelViewSet):
     """
     queryset = Ride.objects.all()
     serializer_class = RideSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('active', 'user')
 
 
 class WaypointViewSet(viewsets.ModelViewSet):
@@ -43,6 +46,8 @@ class PickUpRequestViewSet(viewsets.ModelViewSet):
     """
     queryset = PickUpRequest.objects.all()
     serializer_class = PickUpRequestSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('ride', 'user')
 
 
 class LocationViewSet(viewsets.ModelViewSet):
