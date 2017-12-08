@@ -81,6 +81,4 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
             }
         });
 
-        $rootScope.user = undefined;
-
     }]);
