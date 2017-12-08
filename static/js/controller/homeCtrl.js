@@ -3,7 +3,7 @@
 /**
  * Controller - homeCtrl
  */
-hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataService', function ($rootScope, $scope, $state, $q, dataService) {
+hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataService', 'locationService', function ($rootScope, $scope, $state, $q, dataService, locationService) {
 
     //Load active rides and pickup requests
     $scope.myActiveRides = [];
@@ -18,11 +18,21 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
                 var uriStart = ride.rideStart.replace($rootScope.url, '');
                 var p1 = dataService.get(uriStart).then(function(rideStart) {
                     ride.rideStart = rideStart;
+                    if (angular.isUndefined(ride.rideStart.title) || ride.rideStart.title === '' || ride.rideStart.title === null) {
+                        locationService.resolveToName(ride.rideStart).then(function(title) {
+                            ride.rideStart.title = title;
+                        });
+                    }
                 });
                 promises.push(p1);
                 var uriDestination = ride.rideDestination.replace($rootScope.url, '');
                 var p2 = dataService.get(uriDestination).then(function(rideDestination) {
                     ride.rideDestination = rideDestination;
+                    if (angular.isUndefined(ride.rideDestination.title) || ride.rideDestination.title === '' || ride.rideDestination.title === null) {
+                        locationService.resolveToName(ride.rideDestination).then(function(title) {
+                            ride.rideDestination.title = title;
+                        });
+                    }
                 });
                 promises.push(p2);
             });
