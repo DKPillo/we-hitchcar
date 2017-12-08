@@ -24,16 +24,16 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
                 var p2 = dataService.get(uriDestination).then(function(rideDestination) {
                     ride.rideDestination = rideDestination;
                 });
-                promises.push(p1);
+                promises.push(p2);
             });
 
             //Wait for all Async operations to be resolved
             $q.all(promises).then(function() {
-            //reset map markers
-            $scope.resetMap();
-            //All Data prepared, display on Map
-            $scope.displayAvailableRides();
-        });
+                //reset map markers
+                $scope.resetMap();
+                //All Data prepared, display on Map
+                $scope.displayAvailableRides();
+            });
         });
     };
 
@@ -94,7 +94,7 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition($scope.renderUserMarker);
         }
-    }
+    };
 
     $scope.renderUserMarker = function(position) {
         //Ad Marker for User
@@ -105,7 +105,7 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
         });
         //Track Markers
         $scope.markers.push(marker);
-    }
+    };
 
     //Remove al routes from map
     $scope.resetMap = function() {

@@ -3,7 +3,7 @@
 /**
  * Service - authService
  */
-hitchcar.factory('authService', ['$rootScope', '$q', '$http', function($rootScope, $q, $http) {
+hitchcar.factory('authService', ['$rootScope', '$q', '$http', 'dataService', function($rootScope, $q, $http, dataService) {
     var LOCAL_TOKEN_KEY = 'hitchcar-client-token-key';
     var isAuthenticated = false;
     var authToken;
@@ -55,7 +55,12 @@ hitchcar.factory('authService', ['$rootScope', '$q', '$http', function($rootScop
                 console.log(result);
                 if (result.data.token) {
                     storeUserCredentials(result.data.token);
-                    resolve('success');
+                    dataService.loadUser().then(function (user) {
+                        $rootScope.user = user;
+                        resolve('success');
+                    }).catch(function (reason) {
+                        reject(reason);
+                    });
                 } else {
                     reject(result.data.message);
                 }
@@ -75,6 +80,6 @@ hitchcar.factory('authService', ['$rootScope', '$q', '$http', function($rootScop
         login: login,
         register: register,
         logout: logout,
-        isAuthenticated: function() {return isAuthenticated;},
+        isAuthenticated: function() {return isAuthenticated;}
     };
 }]);
