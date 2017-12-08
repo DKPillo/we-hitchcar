@@ -38,6 +38,16 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
         });
     };
 
+    dataService.put = function(putUri, payloadData) {
+        return $q(function(resolve, reject) {
+            $http.put(dataService.api + putUri, payloadData).then(function(result) {
+                resolve(result.data);
+            }).catch(function(error){
+                reject(error);
+            });
+        });
+    };
+
     // Public Service Methods
     return  {
         get : function(getUri, searchParams) {
@@ -45,6 +55,9 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
         },
         post : function(postUri, payloadData) {
             return dataService.post(postUri, payloadData);
+        },
+        put : function(putUri, payloadData) {
+            return dataService.put(putUri, payloadData);
         }
     };
 }]);
