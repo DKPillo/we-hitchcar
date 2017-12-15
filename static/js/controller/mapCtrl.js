@@ -3,7 +3,7 @@
 /**
  * Controller - mapController
  */
-hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', function ($rootScope, $scope, $q, dataService) {
+hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataService', function ($rootScope, $scope, $q, $filter, dataService) {
 
     //List of available Rides
     $scope.rides = [];
@@ -14,8 +14,9 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
             $scope.rides = rides;
             var promises = [];
 
-            //Resolve Waypoints
+            //Resolve waypoints and set color
             angular.forEach($scope.rides, function(ride) {
+                ride.color = $rootScope.randomColor();
                 //Load Waypoints
                 var p = dataService.get('/api/waypoints/', {ride: ride.id}, ['waypointLocation']).then(function(rideWaypoints) {
                     ride.waypoints = rideWaypoints;
@@ -49,11 +50,8 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
 
         //Load the direction object over Google Maps API for each ride
         angular.forEach($scope.rides, function(ride) {
-            console.log('Ride Details:');
-            console.log(ride);
 
             var waypoints = [];
-
             angular.forEach(ride.waypoints, function(waypoint) {
                 waypoints.push({location: waypoint.waypointLocation.latitude + ', ' + waypoint.waypointLocation.longitude, stopover: false})
             });
@@ -76,52 +74,74 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
         var leg = response.routes[ 0 ].legs[ 0 ];
 
         //Draw Line
-        $scope.createPolyline(response);
+        $scope.createPolyline(response, ride.color, ride);
 
         //Draw start Marker
-        $scope.createMarker(leg.start_location, '', "My Start" );
+        $scope.createMarker(leg.start_location, 'Start:<br/>' + $filter('date')(ride.startTime, 'dd.MM.yyyy HH:mm'), ride.color, '', ride, true, false);
 
         //Draw waypoint Markers
+        var cnt = 1;
         angular.forEach(ride.waypoints, function(waypoint){
-            $scope.createMarker(leg.end_location, '', "My End" );
+            var latLng = new google.maps.LatLng(waypoint.waypointLocation.latitude, waypoint.waypointLocation.longitude);
+            $scope.createMarker(latLng, 'Waypoint ' + cnt + '<br/>' + $filter('date')(waypoint.timestamp, 'dd.MM.yyyy HH:mm'), ride.color, cnt++, ride, false, false);
         });
 
         //Draw destination Marker
-        $scope.createMarker(leg.end_location, '', "My End" );
+        $scope.createMarker(leg.end_location, 'Destination', ride.color, '', ride, false, true);
     };
 
-    $scope.createPolyline = function(directionResult) {
+    $scope.createPolyline = function(directionResult, color, ride) {
         var line = new google.maps.Polyline({
             map: $scope.map,
             path: directionResult.routes[0].overview_path,
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.5,
+            strokeColor: color,
+            strokeOpacity: 1,
             strokeWeight: 4
         });
-    };
 
-    $scope.createMarker = function(latlng, icon, title) {
-        console.log('create marker: ');
-        console.log(latlng);
-        console.log(title);
-
-        var infowindow = new google.maps.InfoWindow({
-          content: title
+        line.addListener('click', function() {
+            $scope.showRideModal(ride);
         });
 
+        $scope.routes.push(line);
+    };
+
+    $scope.createMarker = function(latLng, title, color, number, ride, isStart, isEnd) {
+
+        var pinColor = color.replace('#', '');
+        if (isStart) {
+            number = 'S';
+        }
+        if (isEnd) {
+            number = 'D';
+        }
+
+        var pinImage = new google.maps.MarkerImage("//chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + number +"|" + pinColor, new google.maps.Size(21, 34), new google.maps.Point(0,0), new google.maps.Point(10, 34));
         var marker = new google.maps.Marker({
             map: $scope.map,
-            position: latlng,
-            title: title
+            position: latLng,
+            title: title,
+            icon: pinImage
         });
 
         marker.addListener('click', function() {
-          infowindow.open($scope.map, marker);
+            $scope.showRideModal(ride);
         });
+
+        $scope.routes.push(marker);
     };
 
-    $scope.markers = [];
+    $scope.selectedRide = undefined;
+    $scope.showRideModal = function(ride) {
+        console.log('showRideModal called');
+        //Save Ride in Scope for UI
+        $scope.selectedRide = ride;
+        $('#rideModal').modal('show');
+    };
+
+    $scope.userMarker = undefined;
     $scope.routes = [];
+
     $scope.mapOptions = {
         center: new google.maps.LatLng(46.8, 8.2),
         zoom: 8,
@@ -150,20 +170,17 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', 'dataService', fun
 
     $scope.renderUserMarker = function(position) {
         //Ad Marker for User
-        var marker = new google.maps.Marker({
+        $scope.userMarker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
             position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
         });
-        //Track Markers
-        $scope.markers.push(marker);
     };
 
     //Remove al routes from map
     $scope.resetMap = function() {
-        angular.forEach($scope.routes, function(marker) {
-            //TODO remove all routes
-
+        angular.forEach($scope.routes, function(routElement) {
+            routElement.setMap(null);
         });
     };
 

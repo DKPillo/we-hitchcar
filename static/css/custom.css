@@ -82,7 +82,7 @@ form label {
     left: 0;
     right: 0;
     top: 50px;
-    bottom: 50px;
+    bottom: 0;
 }
 
 #map-container #map {
@@ -150,4 +150,8 @@ h4.modal-title {
 ul.center-list {
     text-align: center;
     list-style: none;
+}
+
+body.isMapView footer {
+    display: none;
 }

@@ -10,5 +10,9 @@ hitchcar.controller('authCtrl', ['$scope', '$state', 'authService', 'AUTH_EVENTS
         $state.go('public.login');
         console.log('Sorry, You have to login again.');
     });
+
+    $scope.isMapView = function() {
+        return $state.current.name === 'private.map';
+    };
     
 }]);
