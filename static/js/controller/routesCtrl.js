@@ -3,9 +3,65 @@
 /**
  * Controller - routesCtrl
  */
-hitchcar.controller('routesCtrl', ['$rootScope', '$scope', 'dataService', function ($rootScope, $scope, dataService) {
+hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 'locationService', function ($rootScope, $scope, $q, dataService, locationService ) {
 
     $scope.newRide = {};
+
+    //Load all past rides
+    $scope.loadPastRides = function() {
+
+        if ($rootScope.user === undefined) {
+            return dataService.loadUser().then(function (user) {
+                console.log('user updated');
+                $rootScope.user = user;
+            });
+        }
+
+        var promises = [];
+        dataService.get('/api/rides/', { user: $rootScope.user.id, active: false }).then(function(rides) {
+            $scope.rides = rides;
+            //Resolve dependencies
+            angular.forEach($scope.rides, function(ride) {
+                var uriStart = ride.rideStart.replace($rootScope.url, '');
+                var p1 = dataService.get(uriStart).then(function(rideStart) {
+                    ride.rideStart = rideStart;
+                    if (angular.isUndefined(ride.rideStart.title) || ride.rideStart.title === '' || ride.rideStart.title === null) {
+                        locationService.resolveToName(ride.rideStart).then(function(title) {
+                            ride.rideStart.title = title;
+                        });
+                    }
+                });
+                promises.push(p1);
+                var uriDestination = ride.rideDestination.replace($rootScope.url, '');
+                var p2 = dataService.get(uriDestination).then(function(rideDestination) {
+                    ride.rideDestination = rideDestination;
+                    if (angular.isUndefined(ride.rideDestination.title) || ride.rideDestination.title === '' || ride.rideDestination.title === null) {
+                        locationService.resolveToName(ride.rideDestination).then(function(title) {
+                            ride.rideDestination.title = title;
+                        });
+                    }
+                });
+                promises.push(p2);
+            });
+
+            //Wait for all Async operations to be resolved
+            $q.all(promises).then(function() {
+                $scope.pastRides = $scope.rides;
+            });
+        });
+
+
+    };
+
+    if ($rootScope.user === undefined) {
+        return dataService.loadUser().then(function (user) {
+            console.log('user updated');
+            $rootScope.user = user;
+            $scope.loadPastRides();
+        });
+    } else {
+        $scope.loadPastRides();
+    }
 
     //Search for user Location:
     $scope.updateLocation = function() {
