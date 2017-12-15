@@ -61,7 +61,7 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
 
         //Change for Production
         $rootScope.url = $location.protocol()+ '://' + $location.host();
-        if ($location.port() !== 80 || $location.port() !== 443) {
+        if ($location.port() !== 80 && $location.port() !== 443) {
             $rootScope.url = $rootScope.url + ':' + $location.port()
         }
 
