@@ -11,8 +11,9 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
 
     $scope.loadData = function() {
         $scope.showSpinner = true;
+        var promises = [];
 
-        dataService.get('/api/rides/', {user: $rootScope.user.id, active: true}, ['rideStart', 'rideDestination']).then(function(rides) {
+        var p1 = dataService.get('/api/rides/', {user: $rootScope.user.id, active: true}, ['rideStart', 'rideDestination']).then(function(rides) {
             $scope.myActiveRides = rides;
 
             //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
@@ -26,32 +27,28 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
                     }
                 });
             });
-
-            $scope.showSpinner = false;
         });
+        promises.push(p1);
 
-        dataService.get('/api/pickuprequests/', {user: $rootScope.user.id}).then(function(requests) {
-            var promises = [];
+        var p2 = dataService.get('/api/pickuprequests/', {user: $rootScope.user.id}, ['currentLocation', 'destination']).then(function(requests) {
             $scope.myActiveRequests = requests;
-            //Resolve dependencies
-            angular.forEach($scope.myActiveRequests, function(request) {
-                var uriLocation = request.currentLocation.replace($rootScope.url, '');
-                var p1 = dataService.get(uriLocation).then(function(currentLocation) {
-                    request.currentLocation = currentLocation;
-                });
-                promises.push(p1);
-                var uriDestination = request.destination.replace($rootScope.url, '');
-                var p2 = dataService.get(uriDestination).then(function(destination) {
-                    request.destination = destination;
-                });
-                promises.push(p2);
-            });
 
-            //Wait for all Async operations to be resolved
-            $q.all(promises).then(function() {
-                console.log('loaded my requests');
-                $scope.showSpinner = false;
+            //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
+            angular.forEach($scope.myActiveRides, function(request) {
+                //Resolve title for both locations of each request.
+                angular.forEach(['currentLocation', 'destination'], function(keyName) {
+                    if (angular.isUndefined(request[keyName].title) || request[keyName].title === '' || request[keyName].title === null) {
+                        locationService.resolveToName(request[keyName]).then(function(title) {
+                            request[keyName].title = title;
+                        });
+                    }
+                });
             });
+        });
+        promises.push(p2);
+
+        $q.all(promises).then(function() {
+            $scope.showSpinner = false;
         });
     };
 
