@@ -9,7 +9,7 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
     const dataService = {};
     dataService.api = $rootScope.url;
 
-    dataService.get = function(getUri, searchParams) {
+    dataService.get = function(getUri, searchParams, locationsToResolve) {
         return $q(function(resolve, reject) {
             var uri = getUri;
             if (angular.isDefined(searchParams)) {
@@ -21,7 +21,25 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
                 uri += params.join('&');
             }
             $http.get(dataService.api + uri).then(function(result) {
-                resolve(result.data);
+                if (angular.isUndefined(locationsToResolve) || locationsToResolve.length === 0) {
+                    resolve(result.data);
+                } else {
+                    var promises = [];
+
+                    angular.forEach(result.data, function(serverObject) {
+                        angular.forEach(locationsToResolve, function(locationName) {
+                            var uri = serverObject[locationName].replace($rootScope.url, '');
+                            var p = dataService.get(uri).then(function(serverLocationObject) {
+                                serverObject[locationName] = serverLocationObject;
+                            });
+                            promises.push(p);
+                        });
+                    });
+
+                    $q.all(promises).then(function() {
+                        resolve(result.data);
+                    });
+                }
             }).catch(function(error){
                 reject(error);
             });
@@ -60,8 +78,8 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
 
     // Public Service Methods
     return  {
-        get : function(getUri, searchParams) {
-            return dataService.get(getUri, searchParams);
+        get : function(getUri, searchParams, locationsToResolve) {
+            return dataService.get(getUri, searchParams, locationsToResolve);
         },
         post : function(postUri, payloadData) {
             return dataService.post(postUri, payloadData);
