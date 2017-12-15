@@ -1,5 +1,8 @@
+deployment/
+env/
+.dockerignore
 .gitignore
 .git/
-Dockerfile
 db.sqlite3
+Dockerfile
 README.md

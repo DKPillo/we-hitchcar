@@ -34,10 +34,11 @@ Building docker image and start as container:
 
 Start container with prebuilt docker image from docker hub:
 
-    # Start Docker
     docker run -d -p 8000:8000 --name hitchcar dkpillo/we-hitchcar
     docker exec -i -t hitchcar /bin/bash
     python manage.py createsuperuser
+
+Alternatively use bash script [./deployment/deploy.sh](https://github.com/DKPillo/we-hitchcar/blob/master/deployment/deploy.sh) 
 
 ### Development
 
