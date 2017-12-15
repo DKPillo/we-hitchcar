@@ -71,7 +71,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
     };
 
     if ($rootScope.user === undefined) {
-        return dataService.loadUser().then(function (user) {
+        dataService.loadUser().then(function (user) {
             console.log('user updated');
             $rootScope.user = user;
             $scope.loadData();
@@ -96,6 +96,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
     $scope.setWaypoint = function(ride) {
         console.log('clicked');
         if (navigator.geolocation) {
+            $scope.showSpinner = true;
             navigator.geolocation.getCurrentPosition( function( position ){
                 console.log('location returned');
                 var location = {
@@ -112,6 +113,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
                     });
                 });
             });
+            $scope.showSpinner = false;
         }
     };
 

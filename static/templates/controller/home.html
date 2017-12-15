@@ -57,7 +57,8 @@
                         <br/>
                         To <a href="https://www.google.com/maps/?q={{ ride.rideDestination.latitude }},{{ ride.rideDestination.longitude }}" target="_blank" >{{ ride.rideDestination.title }}</a>
                         <br/>
-                        <a ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
+                        <a ng-disabled="showSpinner" ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
+                        <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
                         <br/><br/>
                     </div>
                 </div>

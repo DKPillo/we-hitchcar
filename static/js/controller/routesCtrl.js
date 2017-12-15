@@ -11,7 +11,7 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
     $scope.loadPastRides = function() {
 
         if ($rootScope.user === undefined) {
-            return dataService.loadUser().then(function (user) {
+            dataService.loadUser().then(function (user) {
                 console.log('user updated');
                 $rootScope.user = user;
             });
