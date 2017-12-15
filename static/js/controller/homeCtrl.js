@@ -34,7 +34,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
             $scope.myActiveRequests = requests;
 
             //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
-            angular.forEach($scope.myActiveRides, function(request) {
+            angular.forEach($scope.myActiveRequests, function(request) {
                 //Resolve title for both locations of each request.
                 angular.forEach(['currentLocation', 'destination'], function(keyName) {
                     if (angular.isUndefined(request[keyName].title) || request[keyName].title === '' || request[keyName].title === null) {

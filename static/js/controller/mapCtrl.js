@@ -3,10 +3,16 @@
 /**
  * Controller - mapController
  */
-hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataService', function ($rootScope, $scope, $q, $filter, dataService) {
+hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataService', 'locationService', function ($rootScope, $scope, $q, $filter, dataService, locationService) {
 
     //List of available Rides
     $scope.rides = [];
+
+    if ($rootScope.user === undefined) {
+        dataService.loadUser().then(function (user) {
+            $rootScope.user = user;
+        });
+    }
 
     //Load all available rides over API Server (call if map is ready)
     $scope.loadAvailableRides = function() {
@@ -132,11 +138,83 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
     };
 
     $scope.selectedRide = undefined;
+    $scope.tmpRequestData = undefined;
     $scope.showRideModal = function(ride) {
-        console.log('showRideModal called');
         //Save Ride in Scope for UI
         $scope.selectedRide = ride;
+
+        //Prepare data
+        $scope.tmpRequestData = {
+            user: $rootScope.url+'/api/users/'+$rootScope.user.id+'/',
+            ride: ride.url,
+            currentLocation: $scope.currentLocation,
+            destination: undefined
+        };
+
+        //Resolve Location Names
+        angular.forEach(['rideStart', 'rideDestination'], function(keyName) {
+            if (angular.isUndefined(ride[keyName].title) || ride[keyName].title === '' || ride[keyName].title === null) {
+                locationService.resolveToName(ride[keyName]).then(function(title) {
+                    ride[keyName].title = title;
+                });
+            }
+        });
+        angular.forEach(ride.waypoints, function(waypoint) {
+            if (angular.isUndefined(waypoint.waypointLocation.title) || waypoint.waypointLocation.title === '' || waypoint.waypointLocation.title === null) {
+                locationService.resolveToName(waypoint.waypointLocation).then(function(title) {
+                    waypoint.waypointLocation.title = title;
+                });
+            }
+        });
+
+        $('#rideModal').on('shown.bs.modal', function(){
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+
+            searchBox.addListener('places_changed', function() {
+                var places = searchBox.getPlaces();
+
+                if (places.length === 0) {
+                    return;
+                }
+
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function(place) {
+                    if (!place.geometry) {
+                        return;
+                    }
+
+                    //Set ride destination
+                    $scope.tmpRequestData.destination = {
+                        latitude: place.geometry.location.lat(),
+                        longitude: place.geometry.location.lng(),
+                        title: place.formatted_address
+                    };
+
+                    $scope.$apply();
+                });
+            });
+        });
+
         $('#rideModal').modal('show');
+    };
+
+    $scope.sendPickUpRequest = function(ride, requestData) {
+        $scope.showSpinner = true;
+
+        dataService.post('/api/locations/', requestData.currentLocation).then(function(cl) {
+            requestData.currentLocation = cl.url;
+            dataService.post('/api/locations/', requestData.destination).then(function(dst) {
+                requestData.destination = dst.url;
+                dataService.post('/api/pickuprequests/', requestData).then(function(dataPur) {
+                    console.log(dataPur);
+                    $('#rideModal').modal('hide');
+                    $scope.tmpRequestData = undefined;
+                    $scope.showSpinner = false;
+                });
+            });
+        });
     };
 
     $scope.userMarker = undefined;
@@ -169,11 +247,15 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
     };
 
     $scope.renderUserMarker = function(position) {
+        $scope.currentLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        };
         //Ad Marker for User
         $scope.userMarker = new google.maps.Marker({
             map: $scope.map,
             animation: google.maps.Animation.DROP,
-            position: new google.maps.LatLng(position.coords.latitude, position.coords.longitude)
+            position: new google.maps.LatLng($scope.currentLocation.latitude, $scope.currentLocation.longitude)
         });
     };
 

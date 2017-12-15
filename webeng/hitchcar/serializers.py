@@ -30,7 +30,7 @@ class WaypointSerializer(serializers.HyperlinkedModelSerializer):
 class PickUpRequestSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PickUpRequest
-        fields = ('url', 'id', 'user', 'ride', 'currentLocation', 'destination', 'answered', 'answered')
+        fields = ('url', 'id', 'user', 'ride', 'currentLocation', 'destination', 'answered', 'accepted')
 
 
 class LocationSerializer(serializers.HyperlinkedModelSerializer):

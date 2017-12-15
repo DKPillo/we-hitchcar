@@ -123,8 +123,9 @@ form label {
     border-color: #4d90fe;
 }
 
-#search-map-container .pac-container {
+.pac-container {
     font-family: Roboto;
+    z-index: 2500;
 }
 
 #search-map-container #type-selector {
