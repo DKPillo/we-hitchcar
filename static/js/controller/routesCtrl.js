@@ -6,56 +6,33 @@
 hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 'locationService', function ($rootScope, $scope, $q, dataService, locationService ) {
 
     $scope.newRide = {};
+    $scope.pastRides = [];
 
     //Load all past rides
     $scope.loadPastRides = function() {
+        $scope.showSpinner = true;
 
-        if ($rootScope.user === undefined) {
-            dataService.loadUser().then(function (user) {
-                console.log('user updated');
-                $rootScope.user = user;
-            });
-        }
+        dataService.get('/api/rides/', { user: $rootScope.user.id, active: false }, ['rideStart', 'rideDestination']).then(function(rides) {
+            $scope.pastRides = rides;
 
-        var promises = [];
-        dataService.get('/api/rides/', { user: $rootScope.user.id, active: false }).then(function(rides) {
-            $scope.rides = rides;
-            //Resolve dependencies
-            angular.forEach($scope.rides, function(ride) {
-                var uriStart = ride.rideStart.replace($rootScope.url, '');
-                var p1 = dataService.get(uriStart).then(function(rideStart) {
-                    ride.rideStart = rideStart;
-                    if (angular.isUndefined(ride.rideStart.title) || ride.rideStart.title === '' || ride.rideStart.title === null) {
-                        locationService.resolveToName(ride.rideStart).then(function(title) {
-                            ride.rideStart.title = title;
+            //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
+            angular.forEach($scope.pastRides, function(ride) {
+                //Resolve title for both locations of each ride.
+                angular.forEach(['rideStart', 'rideDestination'], function(keyName) {
+                    if (angular.isUndefined(ride[keyName].title) || ride[keyName].title === '' || ride[keyName].title === null) {
+                        locationService.resolveToName(ride[keyName]).then(function(title) {
+                            ride[keyName].title = title;
                         });
                     }
                 });
-                promises.push(p1);
-                var uriDestination = ride.rideDestination.replace($rootScope.url, '');
-                var p2 = dataService.get(uriDestination).then(function(rideDestination) {
-                    ride.rideDestination = rideDestination;
-                    if (angular.isUndefined(ride.rideDestination.title) || ride.rideDestination.title === '' || ride.rideDestination.title === null) {
-                        locationService.resolveToName(ride.rideDestination).then(function(title) {
-                            ride.rideDestination.title = title;
-                        });
-                    }
-                });
-                promises.push(p2);
-            });
-
-            //Wait for all Async operations to be resolved
-            $q.all(promises).then(function() {
-                $scope.pastRides = $scope.rides;
             });
         });
 
-
+        $scope.showSpinner = false;
     };
 
     if ($rootScope.user === undefined) {
-        return dataService.loadUser().then(function (user) {
-            console.log('user updated');
+        dataService.loadUser().then(function (user) {
             $rootScope.user = user;
             $scope.loadPastRides();
         });
@@ -178,10 +155,10 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
         if (!$scope.canStartRide()) {
             return false;
         }
-        console.log($scope.newRide);
+        $scope.showSpinner = true;
 
         var ride = {
-            user: 'http://127.0.0.1:8000/api/users/1/',
+            user: $rootScope.url+'/api/users/'+$rootScope.user.id+'/',
             rideStart: '',
             rideDestination: ''
         };
@@ -192,6 +169,7 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
                 ride.rideDestination = dataDestination.url;
                 dataService.post('/api/rides/', ride).then(function(dataRide) {
                     console.log(dataRide);
+                    $scope.showSpinner = false;
                 });
             });
         });

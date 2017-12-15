@@ -70,7 +70,8 @@
                     <div id="searchMap"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" ng-click="startRide()" ng-disabled="!canStartRide()">Start trip</button>
+                    <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
+                    <button type="button" class="btn btn-primary" ng-click="startRide()" ng-disabled="!canStartRide() || showSpinner">Start trip</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
