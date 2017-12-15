@@ -30,7 +30,7 @@ hitchcar.controller('profileCtrl', ['$scope', 'dataService', function ($scope, d
             repassword: $scope.userData.repassword
         };
 
-        dataService.put('/user', user).then(function(result) {
+        dataService.put('/api/user/', user).then(function(result) {
             $scope.successMsg = result.message;
         }).catch(function(err) {
             if (err.data.message) {

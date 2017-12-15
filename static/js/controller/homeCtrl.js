@@ -11,38 +11,23 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
 
     $scope.loadData = function() {
         $scope.showSpinner = true;
-        dataService.get('/api/rides/', {user: $rootScope.user.id, active: true}).then(function(rides) {
-            var promises = [];
+
+        dataService.get('/api/rides/', {user: $rootScope.user.id, active: true}, ['rideStart', 'rideDestination']).then(function(rides) {
             $scope.myActiveRides = rides;
-            //Resolve dependencies
+
+            //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
             angular.forEach($scope.myActiveRides, function(ride) {
-                var uriStart = ride.rideStart.replace($rootScope.url, '');
-                var p1 = dataService.get(uriStart).then(function(rideStart) {
-                    ride.rideStart = rideStart;
-                    if (angular.isUndefined(ride.rideStart.title) || ride.rideStart.title === '' || ride.rideStart.title === null) {
-                        locationService.resolveToName(ride.rideStart).then(function(title) {
-                            ride.rideStart.title = title;
+                //Resolve title for both locations of each ride.
+                angular.forEach(['rideStart', 'rideDestination'], function(keyName) {
+                    if (angular.isUndefined(ride[keyName].title) || ride[keyName].title === '' || ride[keyName].title === null) {
+                        locationService.resolveToName(ride[keyName]).then(function(title) {
+                            ride[keyName].title = title;
                         });
                     }
                 });
-                promises.push(p1);
-                var uriDestination = ride.rideDestination.replace($rootScope.url, '');
-                var p2 = dataService.get(uriDestination).then(function(rideDestination) {
-                    ride.rideDestination = rideDestination;
-                    if (angular.isUndefined(ride.rideDestination.title) || ride.rideDestination.title === '' || ride.rideDestination.title === null) {
-                        locationService.resolveToName(ride.rideDestination).then(function(title) {
-                            ride.rideDestination.title = title;
-                        });
-                    }
-                });
-                promises.push(p2);
             });
 
-            //Wait for all Async operations to be resolved
-            $q.all(promises).then(function() {
-                console.log('loaded my rides');
-                $scope.showSpinner = false;
-            });
+            $scope.showSpinner = false;
         });
 
         dataService.get('/api/pickuprequests/', {user: $rootScope.user.id}).then(function(requests) {
