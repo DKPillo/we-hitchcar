@@ -26,6 +26,7 @@ SECRET_KEY = '&5gc!_xg%6wc-mvs-j++bm6i6$y79fq+()i9g&j-7gwf$3005_'
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', 'ec2-35-165-202-44.us-west-2.compute.amazonaws.com', 'hitchcar.pillo.ch', 'hitchcar.pillo-srv.ch']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
