@@ -6,6 +6,8 @@
 var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', 'ngCookies', 'ngMessages', 'ngResource', 'ngRoute', 'ngSanitize', 'ngTouch']).
     config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
 
+        $locationProvider.hashPrefix('');
+
         // Router Konfiguration
         $stateProvider
             .state('public', {

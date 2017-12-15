@@ -52,7 +52,6 @@ hitchcar.factory('authService', ['$rootScope', '$q', '$http', 'dataService', fun
     var login = function(user) {
         return $q(function(resolve, reject) {
             $http.post($rootScope.url + '/api/api-token-auth/', user).then(function(result) {
-                console.log(result);
                 if (result.data.token) {
                     storeUserCredentials(result.data.token);
                     dataService.loadUser().then(function (user) {

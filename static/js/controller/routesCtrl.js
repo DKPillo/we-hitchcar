@@ -58,9 +58,12 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
     //Opens a Modal to search for the destination
     $scope.openNewRideModal = function () {
         $rootScope.startNewRide = false;
+        //Call initPam if modal is shown, not erlier
+        $('#startTripModal').on('shown.bs.modal', function(){
+            $scope.initMap();
+        });
         //Open the Modal to select the destination:
         $('#startTripModal').modal('show');
-        $scope.initMap();
     };
 
     $scope.mapOptions = {
@@ -169,6 +172,7 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
                 ride.rideDestination = dataDestination.url;
                 dataService.post('/api/rides/', ride).then(function(dataRide) {
                     console.log(dataRide);
+                    $('#startTripModal').modal('hide');
                     $scope.showSpinner = false;
                 });
             });
