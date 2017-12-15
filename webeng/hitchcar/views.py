@@ -54,6 +54,8 @@ class WaypointViewSet(viewsets.ModelViewSet):
     """
     queryset = Waypoint.objects.all()
     serializer_class = WaypointSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('ride',)
 
 
 class PickUpRequestViewSet(viewsets.ModelViewSet):
