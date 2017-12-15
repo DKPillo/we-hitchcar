@@ -10,6 +10,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
     $scope.myActiveRequests = [];
 
     $scope.loadData = function() {
+        $scope.showSpinner = true;
         dataService.get('/api/rides/', {user: $rootScope.user.id, active: true}).then(function(rides) {
             var promises = [];
             $scope.myActiveRides = rides;
@@ -40,6 +41,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
             //Wait for all Async operations to be resolved
             $q.all(promises).then(function() {
                 console.log('loaded my rides');
+                $scope.showSpinner = false;
             });
         });
 
@@ -63,6 +65,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
             //Wait for all Async operations to be resolved
             $q.all(promises).then(function() {
                 console.log('loaded my requests');
+                $scope.showSpinner = false;
             });
         });
     };

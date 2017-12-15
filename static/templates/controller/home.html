@@ -1,6 +1,7 @@
 <div class="maincontent">
 
-    <h1>Home</h1>
+    <h1>Home<span ng-if="showSpinner"> <i class="fa fa-spinner fa-spin"></i></span></h1>
+    <br/>
 
     <div class="row">
         <div class="col-lg-12">
@@ -44,6 +45,9 @@
                     <h3 class="panel-title">My active Rides</h3>
                 </div>
                 <div class="panel-body">
+                    <div ng-if="!myActiveRides || myActiveRides.length === 0" class="alert alert-warning">
+                        You have no active Rides at this moment.
+                    </div>
                     <div ng-repeat="ride in myActiveRides">
                         Ride {{ ride.id }}
                         <br/>
@@ -63,7 +67,9 @@
                     <h3 class="panel-title">My active Pick Up Requests</h3>
                 </div>
                 <div class="panel-body">
-                    TODO: List all PickUpRequests by user:self and ride.active:true
+                    <div ng-if="!myActiveRequests || myActiveRequests.length === 0" class="alert alert-warning">
+                        You have no active Pick Up Requests at this moment.
+                    </div>
                     <div ng-repeat="request in myActiveRequests">
 
                     </div>

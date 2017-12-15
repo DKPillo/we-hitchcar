@@ -148,19 +148,6 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', 'dataService', functi
         return (angular.isDefined($scope.newRide.rideStart) && angular.isDefined($scope.newRide.rideDestination));
     };
 
-    dataService.get('/api/').then(function(data) {
-        console.log(data);
-    });
-
-    dataService.get('/api/rides/').then(function(data) {
-        console.log(data);
-    });
-
-    dataService.get('/api/users/').then(function(data) {
-        console.log(data);
-    });
-
-
     //start a new ride if flag is set
     if ($rootScope.startNewRide) {
         $scope.openNewRideModal();
