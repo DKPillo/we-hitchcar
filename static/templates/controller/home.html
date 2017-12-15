@@ -56,6 +56,8 @@
                         From <a href="https://www.google.com/maps/?q={{ ride.rideStart.latitude }},{{ ride.rideStart.longitude }}" target="_blank" >{{ ride.rideStart.title }}</a>
                         <br/>
                         To <a href="https://www.google.com/maps/?q={{ ride.rideDestination.latitude }},{{ ride.rideDestination.longitude }}" target="_blank" >{{ ride.rideDestination.title }}</a>
+                        <br/>
+                        <a ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
                         <br/><br/>
                     </div>
                 </div>
