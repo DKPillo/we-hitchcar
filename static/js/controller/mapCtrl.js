@@ -145,7 +145,7 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
 
         //Prepare data
         $scope.tmpRequestData = {
-            user: $rootScope.url+'/api/users/'+$rootScope.user.id+'/',
+            user: $rootScope.user.url,
             ride: ride.url,
             currentLocation: $scope.currentLocation,
             destination: undefined

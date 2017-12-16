@@ -73,31 +73,10 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
         $state.go('private.map');
     };
 
-    //Set waypoint for a ride
-    $scope.setWaypoint = function(ride) {
-        if (navigator.geolocation) {
-            $scope.showSpinner = true;
-            navigator.geolocation.getCurrentPosition( function( position ){
-                var location = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
-
-                dataService.post('/api/locations/', location).then(function(locationObject) {
-                    var waypoint = {
-                        waypointLocation: locationObject.url,
-                        ride: ride.url
-                    };
-
-                    dataService.post('/api/waypoints/', waypoint).then(function( waypointObject) {
-                        console.log(waypointObject);
-                        $scope.showSpinner = false;
-                    });
-                });
-            });
-        } else {
-            $scope.showSpinner = false;
-        }
+    $scope.openRide = function(rideId) {
+        $state.go('private.ride', {id:rideId});
     };
+
+
 
 }]);

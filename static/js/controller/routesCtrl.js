@@ -161,7 +161,7 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
         $scope.showSpinner = true;
 
         var ride = {
-            user: $rootScope.url+'/api/users/'+$rootScope.user.id+'/',
+            user: $rootScope.user.url,
             rideStart: '',
             rideDestination: ''
         };

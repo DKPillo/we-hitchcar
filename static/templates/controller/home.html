@@ -49,17 +49,18 @@
                         You have no active Rides at this moment.
                     </div>
                     <div ng-repeat="ride in myActiveRides">
-                        Ride {{ ride.id }}
+                        <p>
+                            Ride {{ ride.id }}
+                            <br/>
+                            Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
+                            <br/>
+                            From <a href="https://www.google.com/maps/?q={{ ride.rideStart.latitude }},{{ ride.rideStart.longitude }}" target="_blank" >{{ ride.rideStart.title }}</a>
+                            <br/>
+                            To <a href="https://www.google.com/maps/?q={{ ride.rideDestination.latitude }},{{ ride.rideDestination.longitude }}" target="_blank" >{{ ride.rideDestination.title }}</a>
+                            <br/><br/>
+                            <button class="btn btn-primary btn-block" ng-click="openRide(ride.id)">Show ride details</button>
+                        </p>
                         <br/>
-                        Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
-                        <br/>
-                        From <a href="https://www.google.com/maps/?q={{ ride.rideStart.latitude }},{{ ride.rideStart.longitude }}" target="_blank" >{{ ride.rideStart.title }}</a>
-                        <br/>
-                        To <a href="https://www.google.com/maps/?q={{ ride.rideDestination.latitude }},{{ ride.rideDestination.longitude }}" target="_blank" >{{ ride.rideDestination.title }}</a>
-                        <br/>
-                        <a ng-disabled="showSpinner" ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
-                        <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
-                        <br/><br/>
                     </div>
                 </div>
             </div>

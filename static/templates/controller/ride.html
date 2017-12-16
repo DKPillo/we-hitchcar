@@ -1,0 +1,26 @@
+<div class="maincontent">
+
+    <h1>Ride details<span ng-if="showSpinner"> <i class="fa fa-spinner fa-spin"></i></span></h1>
+    <br/>
+
+    <div class="row">
+        <div class="col-lg-12">
+
+            <p>
+                {{ride | json}}
+            </p>
+
+
+            <div>
+                <a ng-disabled="showSpinner" ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
+                <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+

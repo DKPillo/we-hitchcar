@@ -26,15 +26,15 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
                 } else {
                     var promises = [];
 
-                    angular.forEach(result.data, function(serverObject) {
-                        angular.forEach(locationsToResolve, function(locationName) {
-                            var uri = serverObject[locationName].replace($rootScope.url, '');
-                            var p = dataService.get(uri).then(function(serverLocationObject) {
-                                serverObject[locationName] = serverLocationObject;
-                            });
+                    if (result.data.hasOwnProperty(locationsToResolve[0])) {
+                        var p = dataService.resolveLocation(result.data, locationsToResolve);
+                        promises.push(p);
+                    } else {
+                        angular.forEach(result.data, function(serverObject) {
+                            var p = dataService.resolveLocation(serverObject, locationsToResolve);
                             promises.push(p);
                         });
-                    });
+                    }
 
                     $q.all(promises).then(function() {
                         resolve(result.data);
@@ -42,6 +42,22 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
                 }
             }).catch(function(error){
                 reject(error);
+            });
+        });
+    };
+
+    dataService.resolveLocation = function(serverObject, locationsToResolve) {
+        return $q(function(resolve, reject) {
+            var promises = [];
+            angular.forEach(locationsToResolve, function(locationName) {
+                var uri = serverObject[locationName].replace($rootScope.url, '');
+                var p = dataService.get(uri).then(function(serverLocationObject) {
+                    serverObject[locationName] = serverLocationObject;
+                });
+                promises.push(p);
+            });
+            $q.all(promises).then(function() {
+                resolve(serverObject);
             });
         });
     };
@@ -69,6 +85,7 @@ hitchcar.factory('dataService', ['$rootScope', '$q', '$http', '$filter', functio
     dataService.loadUser = function() {
         return $q(function(resolve, reject) {
             $http.get(dataService.api + '/api/user/').then(function(result) {
+                result.data.url = $rootScope.url+'/api/users/'+result.data.id+'/';
                 resolve(result.data);
             }).catch(function(error){
                 reject(error);

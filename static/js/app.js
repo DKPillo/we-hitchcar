@@ -41,6 +41,11 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
                 templateUrl: 'static/templates/controller/routes.html',
                 controller: 'routesCtrl'
             })
+            .state('private.ride', {
+                url: '/ride/:id',
+                templateUrl: 'static/templates/controller/ride.html',
+                controller: 'rideCtrl'
+            })
             .state('private.profile', {
                 url: '/profile',
                 templateUrl: 'static/templates/controller/profile.html',
