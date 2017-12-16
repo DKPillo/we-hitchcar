@@ -108,4 +108,8 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
             return $rootScope.randomColorSet[Math.floor(Math.random() * $rootScope.randomColorSet.length)];
         };
 
+        $rootScope.getMapUrl = function(location) {
+            return 'https://www.google.com/maps/?q='+location.latitude+','+location.longitude;
+        }
+
     }]);

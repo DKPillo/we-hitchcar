@@ -7,7 +7,7 @@
             <div class="modal-body">
                 <p>User started this ride at {{ selectedRide.startTime | date : 'dd.MM.yyyy HH:mm' }}</p>
                 <p>
-                    From <a href="https://www.google.com/maps/?q={{selectedRide.rideStart.latitude}},{{selectedRide.rideStart.longitude}}" target="_blank" >{{selectedRide.rideStart.title}}</a>
+                    From <a href="{{getMapUrl(ride.rideStart)}}" target="_blank" >{{selectedRide.rideStart.title}}</a>
                 </p>
                 <p>
                     via waypoints:
@@ -16,14 +16,14 @@
                             No waypoints reached yet
                         </li>
                         <li ng-repeat="waypoint in selectedRide.waypoints">
-                            <a href="https://www.google.com/maps/?q={{waypoint.waypointLocation.latitude}},{{waypoint.waypointLocation.longitude}}" target="_blank" >
+                            <a href="{{getMapUrl(waypoint.waypointLocation)}}" target="_blank" >
                                 {{waypoint.waypointLocation.title}} (at {{ waypoint.timestamp | date : 'dd.MM.yyyy HH:mm' }})
                             </a>
                         </li>
                     </ul>
                 </p>
                 <p>
-                    to destination <a href="https://www.google.com/maps/?q={{selectedRide.rideDestination.latitude}},{{selectedRide.rideDestination.longitude}}" target="_blank" >{{selectedRide.rideDestination.title}}</a>
+                    to destination <a href="{{getMapUrl(ride.rideDestination)}}" target="_blank" >{{selectedRide.rideDestination.title}}</a>
                 </p>
 
                 <br/>

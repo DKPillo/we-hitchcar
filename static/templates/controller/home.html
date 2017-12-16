@@ -54,9 +54,9 @@
                             <br/>
                             Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
                             <br/>
-                            From <a href="https://www.google.com/maps/?q={{ ride.rideStart.latitude }},{{ ride.rideStart.longitude }}" target="_blank" >{{ ride.rideStart.title }}</a>
+                            From <a href="{{getMapUrl(ride.rideStart)}}" target="_blank" >{{ ride.rideStart.title }}</a>
                             <br/>
-                            To <a href="https://www.google.com/maps/?q={{ ride.rideDestination.latitude }},{{ ride.rideDestination.longitude }}" target="_blank" >{{ ride.rideDestination.title }}</a>
+                            To <a href="{{getMapUrl(ride.rideDestination)}}" target="_blank" >{{ ride.rideDestination.title }}</a>
                             <br/><br/>
                             <button class="btn btn-primary btn-block" ng-click="openRide(ride.id)">Show ride details</button>
                         </p>
