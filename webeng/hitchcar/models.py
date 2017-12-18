@@ -84,7 +84,7 @@ def send_push_if_available(puckUpRequest, ride, user):
     if user.profile.pushover:
         client = Client(user.profile.pushover, api_token="ad9ohz7ege8sr2ejv3t3asfcnszyr9")
         client.send_message("New PickUp Request on Hitchcar.", title="New PickUp Request",
-                            url="http://127.0.0.1:8000/#/ride/" + str(ride.id), url_title="Open Ride")
+                            url="https://hitchcar.pillo.ch/#/ride/" + str(ride.id), url_title="Open Ride")
 
 
 @receiver(post_save, sender=PickUpRequest)

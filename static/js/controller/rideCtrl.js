@@ -3,7 +3,7 @@
 /**
  * Controller - rideCtrl
  */
-hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$stateParams', 'dataService', 'locationService', function ($rootScope, $scope, $stateParams, dataService, locationService) {
+hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$state', '$stateParams', 'dataService', 'locationService', function ($rootScope, $scope, $state, $stateParams, dataService, locationService) {
 
     $scope.rideId = $stateParams.id;
     $scope.ride = undefined;
@@ -11,6 +11,10 @@ hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$stateParams', 'dataSe
     $scope.loadRideDetails = function() {
         dataService.get('/api/rides/'+$scope.rideId+'/', undefined, ['rideStart', 'rideDestination']).then(function(ride) {
             $scope.ride = ride;
+            if (!ride.active) {
+                $state.go('private.home');
+                return;
+            }
 
             //Resolve title for both locations of ride.
             angular.forEach(['rideStart', 'rideDestination'], function(keyName) {
@@ -87,10 +91,10 @@ hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$stateParams', 'dataSe
                         ride: ride.url
                     };
 
-                    dataService.post('/api/waypoints/', waypoint).then(function( waypointObject) {
+                    dataService.post('/api/waypoints/', waypoint).then(function(waypointObject) {
                         console.log(waypointObject);
                         $scope.showSpinner = false;
-                        $scope.updateWaypoints();
+                        $scope.updateWaypoints(ride);
                     });
                 });
             });
@@ -98,5 +102,18 @@ hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$stateParams', 'dataSe
             $scope.showSpinner = false;
         }
     };
+
+    //Stop a currently active ride
+    $scope.stopRide = function(ride) {
+        $scope.showSpinner = true;
+        var updatedRide = {
+            id: ride.id,
+            active: false
+        };
+        dataService.put('/api/rides/' + ride.id + '/', updatedRide).then(function(result) {
+            $scope.showSpinner = false;
+            $state.go('private.home');
+        });
+    }
 
 }]);
