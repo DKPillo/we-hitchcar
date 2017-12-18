@@ -49,18 +49,18 @@
                         You have no active Rides at this moment.
                     </div>
                     <div ng-repeat="ride in myActiveRides">
-                        <p>
-                            Ride {{ ride.id }}
-                            <br/>
-                            Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
-                            <br/>
-                            From <a href="{{getMapUrl(ride.rideStart)}}" target="_blank" >{{ ride.rideStart.title }}</a>
-                            <br/>
-                            To <a href="{{getMapUrl(ride.rideDestination)}}" target="_blank" >{{ ride.rideDestination.title }}</a>
-                            <br/><br/>
+                        <div class="well">
+                            <p>
+                                Ride {{ ride.id }}
+                                <br/>
+                                Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
+                                <br/>
+                                From <a href="{{getMapUrl(ride.rideStart)}}" target="_blank" >{{ ride.rideStart.title }}</a>
+                                <br/>
+                                To <a href="{{getMapUrl(ride.rideDestination)}}" target="_blank" >{{ ride.rideDestination.title }}</a>
+                            </p>
                             <button class="btn btn-primary btn-block" ng-click="openRide(ride.id)">Show ride details</button>
-                        </p>
-                        <br/>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,28 @@
                         You have no active Pick Up Requests at this moment.
                     </div>
                     <div ng-repeat="request in myActiveRequests">
-                        <p>TODO: {{request}}</p>
+                        <div class="well">
+                            <div ng-if="!request.answered" class="alert alert-warning">
+                                Driver has not answered yet.
+                            </div>
+                            <div ng-if="request.answered">
+                                <div ng-if="!request.accepted" class="alert alert-danger">
+                                    Driver has rejected your request.
+                                </div>
+                                <div ng-if="request.accepted" class="alert alert-success">
+                                    Driver has accepted your request.
+                                </div>
+                            </div>
+                            <p>
+                                PickUp Request {{ request.id }}
+                                <br/>
+                                For ride: {{request.ride}}
+                                <br/>
+                                From <a href="{{getMapUrl(request.currentLocation)}}" target="_blank" >{{ request.currentLocation.title }}</a>
+                                <br/>
+                                To <a href="{{getMapUrl(request.destination)}}" target="_blank" >{{ request.destination.title }}</a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
