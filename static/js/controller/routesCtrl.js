@@ -3,7 +3,7 @@
 /**
  * Controller - routesCtrl
  */
-hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 'locationService', function ($rootScope, $scope, $q, dataService, locationService ) {
+hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', '$timeout', 'dataService', 'locationService', function ($rootScope, $scope, $q, $timeout, dataService, locationService ) {
 
     $scope.newRide = {};
     $scope.pastRides = [];
@@ -186,7 +186,9 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', 'dataService', 
 
     //start a new ride if flag is set
     if ($rootScope.startNewRide) {
-        $scope.openNewRideModal();
+        $timeout(function() {
+            $scope.openNewRideModal();
+        }, 500);
     }
 
 }]);

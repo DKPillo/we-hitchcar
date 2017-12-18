@@ -3,7 +3,7 @@
 /**
  * Controller - loginCtrl
  */
-hitchcar.controller('loginCtrl', ['$scope', 'authService', '$state', function($scope, authService, $state) {
+hitchcar.controller('loginCtrl', ['$rootScope', '$scope', 'authService', '$state', function($rootScope, $scope, authService, $state) {
 
     $scope.loginError = undefined;
 
@@ -15,7 +15,12 @@ hitchcar.controller('loginCtrl', ['$scope', 'authService', '$state', function($s
     $scope.login = function() {
         $scope.loginError = undefined;
         authService.login($scope.user).then(function(msg) {
-            $state.go('private.home');
+            if (angular.isDefined($rootScope.originalTarget)) {
+                $state.go($rootScope.originalTarget.name, $rootScope.originalTarget.params);
+                $rootScope.originalTarget = undefined;
+            } else {
+                $state.go('private.home');
+            }
         }, function(errMsg) {
             $scope.loginError = 'Login failed: ' + errMsg;
             console.log('error');

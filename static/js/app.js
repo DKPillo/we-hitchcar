@@ -74,6 +74,10 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
         $transitions.onStart({ to: 'private.**' }, function(transition) {
             var auth = transition.injector().get('authService');
             if (!auth.isAuthenticated()) {
+                $rootScope.originalTarget = {
+                    name: transition.$to().name,
+                    params: transition.params()
+                };
                 // User isn't authenticated. Redirect to login state.
                 return transition.router.stateService.target('public.login');
             }
@@ -109,6 +113,9 @@ var hitchcar = angular.module('hitchcar', ['ui.router', 'ngAnimate', 'ngAria', '
         };
 
         $rootScope.getMapUrl = function(location) {
+            if (angular.isUndefined(location)) {
+                return '';
+            }
             return 'https://www.google.com/maps/?q='+location.latitude+','+location.longitude;
         }
 
