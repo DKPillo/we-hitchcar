@@ -6,14 +6,18 @@
 hitchcar.controller('profileCtrl', ['$scope', 'dataService', function ($scope, dataService) {
 
     $scope.userData = {};
+    $scope.profileData = {};
     $scope.errorMsg = undefined;
     $scope.successMsg = undefined;
 
     //Get the logged in user
     $scope.showSpinner = true;
-    dataService.loadUser().then(function (user) {
+    dataService.get('/api/user/').then(function (user) {
         $scope.userData = user;
-        $scope.showSpinner = false;
+        dataService.get('/api/profiles/' + $scope.userData.profile + '/').then(function(profile) {
+            $scope.profileData = profile;
+            $scope.showSpinner = false;
+        });
     });
 
     /**
@@ -30,16 +34,23 @@ hitchcar.controller('profileCtrl', ['$scope', 'dataService', function ($scope, d
             repassword: $scope.userData.repassword
         };
 
-        dataService.put('/api/user/', user).then(function(result) {
-            $scope.successMsg = result.message;
+        dataService.put('/api/profiles/' + $scope.userData.profile + '/', $scope.profileData).then(function(result) {
+
+            dataService.put('/api/user/' + $scope.userData.id + '/', user).then(function(result) {
+                $scope.successMsg = result.message;
+
+            }).catch(function(err) {
+                if (err.data.message) {
+                    $scope.errorMsg = err.data.message;
+                } else {
+                    $scope.errorMsg = "Error connecting to server.";
+                }
+            }).finally(function() {
+                $scope.showSpinner = false;
+            });
+
         }).catch(function(err) {
-            if (err.data.message) {
-                $scope.errorMsg = err.data.message;
-            } else {
-                $scope.errorMsg = "Error connecting to server.";
-            }
-        }).finally(function() {
-            $scope.showSpinner = false;
+            $scope.showSpinner = true;
         });
     };
 

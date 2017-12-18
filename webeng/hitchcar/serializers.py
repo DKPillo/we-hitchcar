@@ -1,12 +1,18 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from webeng.hitchcar.models import Waypoint, PickUpRequest, Location, Ride
+from webeng.hitchcar.models import Waypoint, PickUpRequest, Location, Ride, Profile
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'email')
+        fields = ('url', 'id', 'username', 'email', 'profile')
+
+
+class ProfileSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('url', 'id', 'phone', 'pushover')
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

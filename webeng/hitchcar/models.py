@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django.db import models
+from pushover import Client
 
 
 # This code is triggered whenever a new user has been created and saved to the database
@@ -13,6 +14,24 @@ from django.db import models
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+
+class Profile(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=200, null=True, blank=True)
+    pushover = models.CharField(max_length=200, null=True, blank=True)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 
 # Create your models here.
@@ -58,6 +77,20 @@ class PickUpRequest(models.Model):
     def __str__(self):
         return "PickUpRequest from " + self.currentLocation.__str__() + " to " + self.destination.__str__() + "("\
                + self.user.username + ")."
+
+
+# This code is triggered whenever a new pickup request has ben saved
+def send_push_if_available(puckUpRequest, ride, user):
+    if user.profile.pushover:
+        client = Client(user.profile.pushover, api_token="ad9ohz7ege8sr2ejv3t3asfcnszyr9")
+        client.send_message("New PickUp Request on Hitchcar.", title="New PickUp Request",
+                            url="http://127.0.0.1:8000/#/ride/" + str(ride.id), url_title="Open Ride")
+
+
+@receiver(post_save, sender=PickUpRequest)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        send_push_if_available(instance, instance.ride, instance.ride.user)
 
 
 class Location(models.Model):

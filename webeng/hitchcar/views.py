@@ -1,12 +1,14 @@
+import sys
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
-from webeng.hitchcar.models import Ride, Waypoint, PickUpRequest, Location
+from webeng.hitchcar.models import Ride, Waypoint, PickUpRequest, Location, Profile
 from webeng.hitchcar.serializers import UserSerializer, GroupSerializer, RideSerializer, WaypointSerializer, \
-    PickUpRequestSerializer, LocationSerializer
+    PickUpRequestSerializer, LocationSerializer, ProfileSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -17,6 +19,14 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
+class ProfileViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+
 class CurrentUserViewSet(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
@@ -24,7 +34,19 @@ class CurrentUserViewSet(APIView):
             'id': user.id,
             'username': user.username,
             'email': user.email,
+            'profile': user.profile.id,
         })
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        user.email = request.data["email"]
+        if "password" in request.data and request.data["password"] != '':
+            if "repassword" in request.data and request.data["password"] == request.data["repassword"]:
+                user.set_password(request.data["password"])
+            else:
+                return Response({'success':False}, status=status.HTTP_400_BAD_REQUEST)
+        user.save()
+        return Response({'success':True})
 
 
 current_user_view = CurrentUserViewSet.as_view()

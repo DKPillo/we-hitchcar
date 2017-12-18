@@ -14,6 +14,7 @@ router.register(r'rides', views.RideViewSet)
 router.register(r'waypoints', views.WaypointViewSet)
 router.register(r'pickuprequests', views.PickUpRequestViewSet)
 router.register(r'locations', views.LocationViewSet)
+router.register(r'profiles', views.ProfileViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
