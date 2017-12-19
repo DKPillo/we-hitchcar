@@ -156,3 +156,11 @@ ul.center-list {
 body.isMapView footer {
     display: none;
 }
+
+#map-widget {
+    position: absolute;
+    left: 10px;
+    top: 50px;
+    width: 300px;
+    max-height: 700px;
+}

@@ -3,7 +3,7 @@
 /**
  * Controller - mapController
  */
-hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataService', 'locationService', function ($rootScope, $scope, $q, $filter, dataService, locationService) {
+hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', '$timeout', 'dataService', 'locationService', function ($rootScope, $scope, $q, $filter, $timeout, dataService, locationService) {
 
     //List of available Rides
     $scope.rides = [];
@@ -13,6 +13,8 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
             $rootScope.user = user;
         });
     }
+
+    $scope.showSpinner = true;
 
     //Load all available rides over API Server (call if map is ready)
     $scope.loadAvailableRides = function() {
@@ -44,10 +46,9 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
     //Display Available Rides
     $scope.directionsService = undefined;
     $scope.displayAvailableRides = function() {
-        console.log($scope.rides);
-
         //Dont to anything if there are no routes.
         if ($scope.rides.length === 0) {
+            $scope.showSpinner = false;
             return;
         }
 
@@ -78,26 +79,37 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
     };
 
     $scope.renderRideOnMap = function(ride, response) {
+        var rideData = {
+            ride: ride,
+            markers: [],
+            shown: true
+        };
+
         var leg = response.routes[ 0 ].legs[ 0 ];
 
         //Draw Line
-        $scope.createPolyline(response, ride.color, ride);
+        $scope.createPolyline(rideData, response, ride.color, ride);
 
         //Draw start Marker
-        $scope.createMarker(leg.start_location, 'Start:<br/>' + $filter('date')(ride.startTime, 'dd.MM.yyyy HH:mm'), ride.color, '', ride, true, false);
+        $scope.createMarker(rideData, leg.start_location, 'Start: ' + $filter('date')(ride.startTime, 'dd.MM.yyyy HH:mm'), ride.color, '', ride, true, false);
 
         //Draw waypoint Markers
         var cnt = 1;
         angular.forEach(ride.waypoints, function(waypoint){
             var latLng = new google.maps.LatLng(waypoint.waypointLocation.latitude, waypoint.waypointLocation.longitude);
-            $scope.createMarker(latLng, 'Waypoint ' + cnt + '<br/>' + $filter('date')(waypoint.timestamp, 'dd.MM.yyyy HH:mm'), ride.color, cnt++, ride, false, false);
+            $scope.createMarker(rideData, latLng, 'Waypoint ' + cnt + ': ' + $filter('date')(waypoint.timestamp, 'dd.MM.yyyy HH:mm'), ride.color, cnt++, ride, false, false);
         });
 
         //Draw destination Marker
-        $scope.createMarker(leg.end_location, 'Destination', ride.color, '', ride, false, true);
+        $scope.createMarker(rideData, leg.end_location, 'Destination', ride.color, '', ride, false, true);
+
+        $timeout(function() {
+            $scope.routes.push(rideData);
+            $scope.showSpinner = false;
+        }, 250);
     };
 
-    $scope.createPolyline = function(directionResult, color, ride) {
+    $scope.createPolyline = function(rideData, directionResult, color, ride) {
         var line = new google.maps.Polyline({
             map: $scope.map,
             path: directionResult.routes[0].overview_path,
@@ -110,10 +122,10 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
             $scope.showRideModal(ride);
         });
 
-        $scope.routes.push(line);
+        rideData.markers.push(line);
     };
 
-    $scope.createMarker = function(latLng, title, color, number, ride, isStart, isEnd) {
+    $scope.createMarker = function(rideData, latLng, title, color, number, ride, isStart, isEnd) {
 
         var pinColor = color.replace('#', '');
         if (isStart) {
@@ -135,7 +147,7 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
             $scope.showRideModal(ride);
         });
 
-        $scope.routes.push(marker);
+        rideData.markers.push(marker);
     };
 
     $scope.selectedRide = undefined;
@@ -143,6 +155,11 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
     $scope.showRideModal = function(ride) {
         //Save Ride in Scope for UI
         $scope.selectedRide = ride;
+
+        $timeout(function() {
+            //Dont delete, updates scope.
+            console.log('opening ride modal');
+        });
 
         //Prepare data
         $scope.tmpRequestData = {
@@ -262,9 +279,22 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', 'dataSe
 
     //Remove al routes from map
     $scope.resetMap = function() {
-        angular.forEach($scope.routes, function(routElement) {
-            routElement.setMap(null);
+        angular.forEach($scope.routes, function(rideData) {
+            angular.forEach(rideData.markers, function(routElement) {
+                routElement.setMap(null);
+            });
         });
+        $scope.routes = [];
     };
+
+    $scope.hideOrDisplayRoute = function(route) {
+        angular.forEach(route.markers, function(marker) {
+            if (route.shown) {
+                marker.setMap($scope.map);
+            } else {
+                marker.setMap(null);
+            }
+        });
+    }
 
 }]);
