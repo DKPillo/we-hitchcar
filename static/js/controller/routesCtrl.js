@@ -3,7 +3,7 @@
 /**
  * Controller - routesCtrl
  */
-hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', '$timeout', 'dataService', 'locationService', function ($rootScope, $scope, $q, $timeout, dataService, locationService ) {
+hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', '$timeout', '$state', 'dataService', 'locationService', function ($rootScope, $scope, $q, $timeout, $state, dataService, locationService ) {
 
     $scope.newRide = {};
     $scope.pastRides = [];
@@ -173,7 +173,10 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', '$timeout', 'da
                 dataService.post('/api/rides/', ride).then(function(dataRide) {
                     console.log(dataRide);
                     $('#startTripModal').modal('hide');
-                    $scope.showSpinner = false;
+                    $timeout(function() {
+                        $scope.showSpinner = false;
+                        $state.go('private.ride', {id:dataRide.id});
+                    }, 500);
                 });
             });
         });

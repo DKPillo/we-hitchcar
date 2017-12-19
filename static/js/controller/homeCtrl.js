@@ -30,6 +30,7 @@ hitchcar.controller('homeCtrl', ['$rootScope', '$scope', '$state', '$q', 'dataSe
         });
         promises.push(p1);
 
+        //TODO: only pickup requests where ride is active
         var p2 = dataService.get('/api/pickuprequests/', {user: $rootScope.user.id}, ['currentLocation', 'destination']).then(function(requests) {
             $scope.myActiveRequests = requests;
 

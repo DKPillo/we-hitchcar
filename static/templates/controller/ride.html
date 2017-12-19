@@ -37,6 +37,46 @@
         <div class="col-lg-6">
             <div class="panel panel-info">
                 <div class="panel-heading">
+                    <h3 class="panel-title">PickUp Requests</h3>
+                </div>
+                <div class="panel-body">
+                    <div ng-if="ride.requests.length === 0" class="alert alert-warning">
+                        You have no RickUp requests for your ride yet.
+                    </div>
+                    <div class="well" ng-repeat="request in ride.requests">
+                        <div ng-if="!request.answered" class="alert alert-warning">
+                            You have not answered this request.
+                        </div>
+                        <div ng-if="request.answered">
+                            <div ng-if="!request.accepted" class="alert alert-danger">
+                                You declined this request.
+                            </div>
+                            <div ng-if="request.accepted" class="alert alert-success">
+                                You accepted this request.
+                            </div>
+                        </div>
+                        <p>
+                            PickUp Request {{ request.id }}
+                            <br/>
+                            For ride: {{request.ride}}
+                            <br/>
+                            From <a href="{{getMapUrl(request.currentLocation)}}" target="_blank" >{{ request.currentLocation.title }}</a>
+                            <br/>
+                            To <a href="{{getMapUrl(request.destination)}}" target="_blank" >{{ request.destination.title }}</a>
+                        </p>
+                        <div ng-if="!request.answered">
+                            <button class="btn btn-success" ng-click="answerRequest(request, true)" ng-disabled="showSpinner"><i class="fa fa-fw fa-thumbs-up"></i>Accept</button>
+                            <button class="btn btn-danger" ng-click="answerRequest(request, false)" ng-disabled="showSpinner"><i class="fa fa-fw fa-thumbs-down"></i>Decline</button>
+                            <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
                     <h3 class="panel-title">Waypoints</h3>
                 </div>
                 <div class="panel-body">
@@ -54,30 +94,6 @@
                     <div>
                         <a ng-disabled="showSpinner" ng-click="setWaypoint(ride)" class="btn btn-primary">Set waypoint</a>
                         <span ng-if="showSpinner"><i class="fa fa-spinner fa-spin"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title">PickUp Requests</h3>
-                </div>
-                <div class="panel-body">
-                    <div ng-if="ride.requests.length === 0" class="alert alert-warning">
-                        You have no RickUp requests for your ride yet.
-                    </div>
-                    <div class="well" ng-repeat="request in ride.requests">
-                        <p>
-                            PickUp Request {{ request.id }}
-                            <br/>
-                            For ride: {{request.ride}}
-                            <br/>
-                            From <a href="{{getMapUrl(request.currentLocation)}}" target="_blank" >{{ request.currentLocation.title }}</a>
-                            <br/>
-                            To <a href="{{getMapUrl(request.destination)}}" target="_blank" >{{ request.destination.title }}</a>
-                        </p>
                     </div>
                 </div>
             </div>

@@ -114,6 +114,19 @@ hitchcar.controller('rideCtrl', ['$rootScope', '$scope', '$state', '$stateParams
             $scope.showSpinner = false;
             $state.go('private.home');
         });
-    }
+    };
+
+    $scope.answerRequest = function(request, accepted) {
+        $scope.showSpinner = true;
+        var updatedRequest = {
+            answered: true,
+            accepted: accepted
+        };
+        dataService.put('/api/pickuprequests/' + request.id + '/', updatedRequest).then(function(result) {
+            request.answered = result.answered;
+            request.accepted = result.accepted;
+            $scope.showSpinner = false;
+        });
+    };
 
 }]);

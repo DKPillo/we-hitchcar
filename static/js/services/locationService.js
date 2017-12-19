@@ -4,7 +4,7 @@
  * Service - LocationService
  *
  */
-hitchcar.factory('locationService', ['$rootScope', '$q', '$http', '$filter', function($rootScope, $q, $http, $filter){
+hitchcar.factory('locationService', ['$rootScope', '$q', '$http', '$filter', 'dataService', function($rootScope, $q, $http, $filter, dataService){
 
     const locationService = {};
 
@@ -22,7 +22,9 @@ hitchcar.factory('locationService', ['$rootScope', '$q', '$http', '$filter', fun
             locationService.geocoder.geocode({'location': latlng}, function(results, status) {
                 if (status === 'OK' && results.length >= 1) {
                     location.title = results[0].formatted_address;
-                    resolve(results[0].formatted_address)
+                    resolve(results[0].formatted_address);
+                    //Update Location object in background
+                    dataService.put('/api/locations/' + location.id + '/', location)
                 } else {
                     resolve('')
                 }
