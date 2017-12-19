@@ -1,7 +1,8 @@
 import sys
+import rest_framework_filters as filters
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework_filters.backends import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
@@ -80,6 +81,20 @@ class WaypointViewSet(viewsets.ModelViewSet):
     filter_fields = ('ride',)
 
 
+class RideFilter(filters.FilterSet):
+    class Meta:
+        model = Ride
+        fields = {'active': ['exact']}
+
+
+class PickUpRequestFilter(filters.FilterSet):
+    ride = filters.RelatedFilter(RideFilter, name='ride', queryset=Ride.objects.all())
+
+    class Meta:
+        model = PickUpRequest
+        fields = {'ride': ['exact'], 'user': ['exact']}
+
+
 class PickUpRequestViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows rides to be viewed or edited.
@@ -88,6 +103,7 @@ class PickUpRequestViewSet(viewsets.ModelViewSet):
     serializer_class = PickUpRequestSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('ride', 'user')
+    filter_class = PickUpRequestFilter
 
 
 class LocationViewSet(viewsets.ModelViewSet):

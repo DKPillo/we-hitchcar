@@ -18,8 +18,7 @@ hitchcar.controller('mapCtrl', ['$rootScope', '$scope', '$q', '$filter', '$timeo
 
     //Load all available rides over API Server (call if map is ready)
     $scope.loadAvailableRides = function() {
-        //TODO: only rides where user does not match
-        dataService.get('/api/rides/', {active: true}, ['rideStart', 'rideDestination']).then(function(rides) {
+        dataService.get('/api/rides/', {active: true, 'user!':$rootScope.user.id}, ['rideStart', 'rideDestination']).then(function(rides) {
             $scope.rides = rides;
             var promises = [];
 

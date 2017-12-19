@@ -34,14 +34,12 @@ Building docker image and start as container:
 
     docker build -t hitchcar .
     docker run -d -p 8000:8000 --name hitchcar hitchcar
-    docker exec -i -t hitchcar /bin/bash
-    python manage.py createsuperuser
+    docker exec -i -t hitchcar python manage.py createsuperuser
 
 Start container with prebuilt docker image from docker hub:
 
     docker run -d -p 8000:8000 --name hitchcar dkpillo/we-hitchcar
-    docker exec -i -t hitchcar /bin/bash
-    python manage.py createsuperuser
+    docker exec -i -t hitchcar python manage.py createsuperuser
 
 Alternatively use bash script [./deployment/deploy.sh](https://github.com/DKPillo/we-hitchcar/blob/master/deployment/deploy.sh) 
 
