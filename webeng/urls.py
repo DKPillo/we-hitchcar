@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^api/user/', views.current_user_view),
     url(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/api-token-auth/', authviews.obtain_auth_token),
+
 ]
