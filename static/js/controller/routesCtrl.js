@@ -30,6 +30,7 @@ hitchcar.controller('routesCtrl', ['$rootScope', '$scope', '$q', '$timeout', '$s
 
         dataService.get('/api/pickuprequests/', {user: $rootScope.user.id, 'ride__active':false}, ['currentLocation', 'destination']).then(function(requests) {
             $scope.myPastRequests = requests;
+
             //Resolve dependencies (we do not wait on Location Resolving by Google Maps API)
             angular.forEach($scope.myActiveRequests, function(request) {
                 //Resolve title for both locations of each request.
