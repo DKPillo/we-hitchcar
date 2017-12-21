@@ -10,7 +10,7 @@ The project is developed with Python 3 and JavaScript and uses the following com
 * Frontend (JavaScript):
   * AngularJS  
   * Bootstrap
-  * FontAwesome
+  * FontAwepysome
   * jQuery
 
 A demo application can be found under [https://hitchcar.pillo.ch/](https://hitchcar.pillo.ch/)

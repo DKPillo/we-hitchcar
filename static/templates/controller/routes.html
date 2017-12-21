@@ -29,10 +29,8 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">Past trips</h3>
@@ -55,6 +53,42 @@
                     </table>
                 </div>
             </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Past Pick Up Requests</h3>
+                </div>
+                    <div class="panel-body">
+                        <div ng-if="!myPastRequests || myPastRequests.length === 0" class="alert alert-warning">
+                            You have no past Pick Up Requests at this moment.
+                        </div>
+                        <div ng-repeat="request in myPastRequests">
+                            <div class="well">
+                                <div ng-if="!request.answered" class="alert alert-warning">
+                                    Driver has not answered yet.
+                                </div>
+                                <div ng-if="request.answered">
+                                    <div ng-if="!request.accepted" class="alert alert-danger">
+                                        Driver has rejected your request.
+                                    </div>
+                                    <div ng-if="request.accepted" class="alert alert-success">
+                                        Driver has accepted your request.
+                                    </div>
+                                </div>
+                                <p>
+                                    PickUp Request {{ request.id }}
+                                    <br/>
+                                    For ride: {{request.ride}}
+                                    <br/>
+                                    From <a href="{{getMapUrl(request.currentLocation)}}" target="_blank" >{{ request.currentLocation.title }}</a>
+                                    <br/>
+                                    To <a href="{{getMapUrl(request.destination)}}" target="_blank" >{{ request.destination.title }}</a>
+                                </p>
+                           </div>
+                       </div>
+                    </div>
+               </div>
         </div>
     </div>
 
