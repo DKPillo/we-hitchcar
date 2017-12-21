@@ -10,7 +10,7 @@ The project is developed with Python 3 and JavaScript and uses the following com
 * Frontend (JavaScript):
   * AngularJS  
   * Bootstrap
-  * FontAwepysome
+  * FontAwesome
   * jQuery
 
 A demo application can be found under [https://hitchcar.pillo.ch/](https://hitchcar.pillo.ch/)
@@ -34,11 +34,13 @@ Building docker image and start as container:
 
     docker build -t hitchcar .
     docker run -d -p 8000:8000 --name hitchcar hitchcar
+    docker exec -i -t hitchcar python manage.py migrate
     docker exec -i -t hitchcar python manage.py createsuperuser
 
 Start container with prebuilt docker image from docker hub:
 
     docker run -d -p 8000:8000 --name hitchcar dkpillo/we-hitchcar
+    docker exec -i -t hitchcar python manage.py migrate
     docker exec -i -t hitchcar python manage.py createsuperuser
 
 Alternatively use bash script [./deployment/deploy.sh](https://github.com/DKPillo/we-hitchcar/blob/master/deployment/deploy.sh) 
