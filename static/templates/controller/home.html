@@ -51,8 +51,6 @@
                     <div ng-repeat="ride in myActiveRides">
                         <div class="well">
                             <p>
-                                Ride {{ ride.id }}
-                                <br/>
                                 Started at {{ ride.startTime | date : 'dd.MM.yyyy HH:mm' }}
                                 <br/>
                                 From <a href="{{getMapUrl(ride.rideStart)}}" target="_blank" >{{ ride.rideStart.title }}</a>
