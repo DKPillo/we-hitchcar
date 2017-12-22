@@ -4,6 +4,8 @@ from webeng.hitchcar import views
 from django.views.generic.base import TemplateView
 from rest_framework.authtoken import views as authviews
 
+
+
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 
@@ -24,5 +26,5 @@ urlpatterns = [
     url(r'^api/user/', views.current_user_view),
     url(r'^api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/api-token-auth/', authviews.obtain_auth_token),
-
+    url(r'^api/signup/$', views.Signup, name='Signup'),
 ]

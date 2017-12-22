@@ -6,6 +6,10 @@ from rest_framework_filters.backends import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
 
 from webeng.hitchcar.models import Ride, Waypoint, PickUpRequest, Location, Profile
 from webeng.hitchcar.serializers import UserSerializer, GroupSerializer, RideSerializer, WaypointSerializer, \
@@ -112,3 +116,28 @@ class LocationViewSet(viewsets.ModelViewSet):
     """
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+"""
+Signup au authentication code 
+"""
+
+class Signup(viewsets.ModelViewSet):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.method = User
+
+    def signup(request):
+        if request.method == 'post':
+            form = UserCreationForm(request.post)
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get('username')
+                raw_password = form.cleaned_data.get('password1')
+                user = authenticate(username=username, password=raw_password)
+                login(request, user)
+                return HttpResponseRedirect('/Thank You /')
+        else:
+            form = UserCreationForm()
+        return render(request, 'register.html', {'form': form})
+
+
