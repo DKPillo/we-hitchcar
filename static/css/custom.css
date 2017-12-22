@@ -172,10 +172,17 @@ body.isMapView footer {
     background-size: 75%;
 }
 
-#hitchcar-logo {
-    position: fixed;
-    top: 70px;
-    right: 20px;
-    width: 200px;
-    z-index: 10000;
+@media screen and (min-width: 991px) {
+    #hitchcar-logo {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        width: 200px;
+        z-index: 10000;
+    }
+}
+@media screen and (max-width: 990px) {
+    #hitchcar-logo {
+        display: none;
+    }
 }
